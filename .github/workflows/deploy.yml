@@ -33,6 +33,7 @@ jobs:
           container-name: veilora-web
           folder-id: b1gnlfdgvsdpmp60a4d9
           revision-image-url: cr.yandex/crplgktfkcdsrtriaqie/veilora-web:latest
+          revision-service-account-id: ajenq85ghuesai7laf46
           revision-execution-timeout: 15s
           revision-cores: 1
           revision-memory: 4096MB

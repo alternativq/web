@@ -39,12 +39,12 @@ jobs:
           ~/yandex-cloud/bin/yc config set service-account-key sa-key.json
           ~/yandex-cloud/bin/yc config set folder-id b1gnlfdgvsdpmp60a4d9
           rm sa-key.json
+          ~/yandex-cloud/bin/yc config list
 
       - name: Deploy new revision to Serverless Container
         run: |
           ~/yandex-cloud/bin/yc serverless container revision deploy \
             --container-id bba7rc6keu68dmrt6hgh \
-            --folder-id b1gnlfdgvsdpmp60a4d9 \
             --image cr.yandex/crplgktfkcdsrtriaqie/veilora-web:latest \
             --cores 1 \
             --memory 4GB \

@@ -34,8 +34,10 @@ jobs:
           echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
 
       - name: Configure YC CLI
+        env:
+          SA_JSON_KEY: ${{ secrets.YC_SA_JSON_KEY }}
         run: |
-          echo '${{ secrets.YC_SA_JSON_KEY }}' > sa-key.json
+          echo "$SA_JSON_KEY" > sa-key.json
           ~/yandex-cloud/bin/yc config set service-account-key sa-key.json
           ~/yandex-cloud/bin/yc config set folder-id b1gnlfdgvsdpmp60a4d9
           rm sa-key.json

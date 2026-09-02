@@ -14,11 +14,9 @@ jobs:
         uses: actions/checkout@v4
 
       - name: Login to Yandex Container Registry
-        uses: docker/login-action@v3
+        uses: yc-actions/yc-cr-login@v1
         with:
-          registry: cr.yandex
-          username: json_key
-          password: ${{ secrets.YC_SA_JSON_KEY }}
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_KEY }}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
@@ -28,27 +26,15 @@ jobs:
           push: true
           tags: cr.yandex/crplgktfkcdsrtriaqie/veilora-web:latest
 
-      - name: Install Yandex Cloud CLI
-        run: |
-          curl -sSL https://storage.yandexcloud.net/yandexcloud-yc/install.sh | bash
-          echo "$HOME/yandex-cloud/bin" >> $GITHUB_PATH
-
-      - name: Configure YC CLI
-        env:
-          SA_JSON_KEY: ${{ secrets.YC_SA_JSON_KEY }}
-        run: |
-          echo "$SA_JSON_KEY" > $HOME/.yc-sa-key.json
-          ~/yandex-cloud/bin/yc config set service-account-key $HOME/.yc-sa-key.json
-          ~/yandex-cloud/bin/yc config set folder-id b1gnlfdgvsdpmp60a4d9
-          ~/yandex-cloud/bin/yc config list
-
-      - name: Deploy new revision to Serverless Container
-        run: |
-          ~/yandex-cloud/bin/yc serverless container revision deploy \
-            --container-id bba7rc6keu68dmrt6hgh \
-            --image cr.yandex/crplgktfkcdsrtriaqie/veilora-web:latest \
-            --cores 1 \
-            --memory 4GB \
-            --execution-timeout 15s \
-            --concurrency 1 \
-            --core-fraction 100
+      - name: Deploy to Serverless Container
+        uses: yc-actions/yc-sls-container-deploy@v2
+        with:
+          yc-sa-json-credentials: ${{ secrets.YC_SA_JSON_KEY }}
+          container-name: veilora-web
+          folder-id: b1gnlfdgvsdpmp60a4d9
+          revision-image-url: cr.yandex/crplgktfkcdsrtriaqie/veilora-web:latest
+          revision-execution-timeout: 15s
+          revision-cores: 1
+          revision-memory: 4096MB
+          revision-concurrency: 1
+          revision-core-fraction: 100
